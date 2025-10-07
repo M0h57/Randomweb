@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة استكشاف التفكير التصميمي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Harmony -->
+    <!-- Application Structure Plan: تم تصميم التطبيق كهيكل موضوعي متعدد الأقسام لتسهيل الاستكشاف غير الخطي. يبدأ بمقدمة تعريفية (ما هو؟)، ثم ينتقل إلى الجزء التفاعلي الأساسي (المراحل الخمس)، متبوعًا بأقسام للمقارنة (مقابل التفكير التقليدي) والتطبيقات العملية (الأدوات والأمثلة). تم اختيار هذا الهيكل لتوجيه المستخدم من المفاهيم العامة إلى التفاصيل المحددة والتطبيقات العملية بطريقة منطقية وجذابة، مما يعزز الفهم بدلاً من مجرد عرض المعلومات بشكل تسلسلي كما في التقرير الأصلي. يسمح هذا التصميم للمستخدم بالتركيز على الأجزاء التي تهمه أكثر. -->
+    <!-- Visualization & Content Choices: 1. المراحل الخمس: (الهدف: تنظيم وشرح) -> بطاقات تفاعلية. التفاعل: النقر لإظهار التفاصيل. المبرر: تقسيم عملية معقدة إلى خطوات قابلة للفهم، مما يمنع إرهاق المستخدم. 2. من يستخدمه؟ (الهدف: إعلام) -> مخطط أعمدة. التفاعل: لا يوجد، البساطة هي الأفضل هنا. المبرر: تصور مرئي سريع لمدى شمولية المنهجية بدلاً من قائمة نصية. (Chart.js). 3. مقارنة طرق التفكير: (الهدف: مقارنة) -> بطاقات جنبًا إلى جنب. المبرر: مقارنة بصرية مباشرة وواضحة لأبرز الفروق. 4. مثال خريطة رحلة المستخدم: (الهدف: شرح أداة) -> مخطط عملية مبسط. التفاعل: المرور فوق الخطوات لإظهار تفاصيل إضافية. المبرر: تحويل مثال جدولي ثابت إلى تجربة تفاعلية توضح ديناميكية الأداة. (HTML/CSS/JS). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #FDFBF5;
+            color: #4A4A4A;
+        }
+        .stage-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .stage-card.active {
+            border-color: #2E8B57;
+            background-color: #F0FFF4;
+            transform: translateY(-2px);
+        }
+        .stage-content {
+            display: none;
+        }
+        .stage-content.active {
+            display: block;
+        }
+        .rtl-chart {
+            direction: rtl;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .journey-step {
+            transition: background-color 0.3s;
+        }
+        .journey-step:hover .journey-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .journey-tooltip {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">استكشاف التفكير التصميمي</h1>
+            <p class="text-lg text-gray-600">منهجية إبداعية لحل المشكلات تتمحور حول الإنسان</p>
+        </header>
+
+        <main>
+            <section id="intro" class="mb-16 bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">ما هو التفكير التصميمي؟</h2>
+                <p class="text-center text-gray-700 max-w-3xl mx-auto leading-relaxed mb-6">
+                    هو نهج مبتكر لحل المشكلات يركز على فهم عميق لاحتياجات المستخدمين. من خلال التعاطف وتحديد المشكلات بدقة وتوليد الأفكار واختبارها، نصل إلى حلول فعالة ومستدامة تلبي احتياجات الناس الحقيقية وتُحسن جودة حياتهم ومنتجاتهم وخدماتهم.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <h3 class="font-bold text-xl text-green-800 mb-2">محوره الإنسان</h3>
+                        <p class="text-green-700">يبدأ بفهم عميق لاحتياجات ورغبات المستخدمين.</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h3 class="font-bold text-xl text-blue-800 mb-2">عملية تكرارية</h3>
+                        <p class="text-blue-700">يعتمد على التجربة والتحسين المستمر بدلاً من البحث عن حل مثالي من المرة الأولى.</p>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <h3 class="font-bold text-xl text-yellow-800 mb-2">إبداعي وتعاوني</h3>
+                        <p class="text-yellow-700">يشجع على توليد مجموعة واسعة من الأفكار والعمل الجماعي متعدد التخصصات.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="stages" class="mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">المراحل الخمس للتفكير التصميمي</h2>
+                <p class="text-center text-gray-700 max-w-3xl mx-auto leading-relaxed mb-8">
+                    التفكير التصميمي هو عملية غير خطية، حيث يمكن التنقل بين المراحل حسب الحاجة. انقر على كل مرحلة لاستكشاف أهدافها وأدواتها الرئيسية.
+                </p>
+                <div id="stage-tabs" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-8">
+                    <div class="stage-card active cursor-pointer p-4 border-2 border-transparent rounded-lg text-center bg-white shadow" data-stage="empathize">
+                        <div class="text-4xl mb-2">❤️</div>
+                        <h3 class="font-bold">١. التعاطف</h3>
+                    </div>
+                    <div class="stage-card cursor-pointer p-4 border-2 border-transparent rounded-lg text-center bg-white shadow" data-stage="define">
+                        <div class="text-4xl mb-2">🎯</div>
+                        <h3 class="font-bold">٢. التعريف</h3>
+                    </div>
+                    <div class="stage-card cursor-pointer p-4 border-2 border-transparent rounded-lg text-center bg-white shadow" data-stage="ideate">
+                        <div class="text-4xl mb-2">💡</div>
+                        <h3 class="font-bold">٣. توليد الأفكار</h3>
+                    </div>
+                    <div class="stage-card cursor-pointer p-4 border-2 border-transparent rounded-lg text-center bg-white shadow" data-stage="prototype">
+                        <div class="text-4xl mb-2">🛠️</div>
+                        <h3 class="font-bold">٤. النموذج الأولي</h3>
+                    </div>
+                    <div class="stage-card cursor-pointer p-4 border-2 border-transparent rounded-lg text-center bg-white shadow" data-stage="test">
+                        <div class="text-4xl mb-2">🧪</div>
+                        <h3 class="font-bold">٥. الاختبار</h3>
+                    </div>
+                </div>
+
+                <div id="stage-content-area" class="bg-white rounded-2xl shadow-lg p-8 min-h-[300px]">
+                    <div id="empathize-content" class="stage-content active">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">التعاطف (Empathize)</h3>
+                        <p class="text-gray-700 mb-4">الهدف هو فهم تجربة المستخدم ومشاعره واحتياجاته بشكل عميق. هذه المرحلة تتطلب ترك الافتراضات جانبًا والانغماس في عالم المستخدم لرؤية المشكلة من منظوره.</p>
+                        <h4 class="font-semibold mb-2">أدوات رئيسية:</h4>
+                        <ul class="list-disc pr-6 text-gray-600">
+                            <li><strong>المقابلات:</strong> طرح أسئلة مفتوحة لفهم تجارب المستخدمين.</li>
+                            <li><strong>الملاحظة:</strong> مراقبة سلوك المستخدم في بيئته الطبيعية.</li>
+                            <li><strong>خريطة التعاطف:</strong> أداة مرئية لتلخيص ما يراه ويسمعه ويفكر به ويشعر به المستخدم.</li>
+                            <li><strong>خرائط رحلة المستخدم:</strong> تصوير مراحل تفاعل المستخدم مع منتج أو خدمة.</li>
+                        </ul>
+                    </div>
+                    <div id="define-content" class="stage-content">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">التعريف (Define)</h3>
+                        <p class="text-gray-700 mb-4">بناءً على ما تعلمته في مرحلة التعاطف، يتم في هذه المرحلة صياغة بيان واضح ودقيق للمشكلة. يجب أن يكون تعريف المشكلة متمحورًا حول المستخدم وليس حول أهداف الشركة.</p>
+                        <h4 class="font-semibold mb-2">الهدف الرئيسي:</h4>
+                        <p class="text-gray-600">الوصول إلى "بيان وجهة نظر" (Point of View) قابل للتنفيذ، يحدد بوضوح من هو المستخدم، وما هي حاجته، ولماذا هي مهمة.</p>
+                    </div>
+                    <div id="ideate-content" class="stage-content">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">توليد الأفكار (Ideate)</h3>
+                        <p class="text-gray-700 mb-4">مرحلة إطلاق العنان للإبداع وتوليد أكبر عدد ممكن من الأفكار والحلول المحتملة للمشكلة التي تم تعريفها. في هذه المرحلة، الكمية أهم من الكيفية، والهدف هو استكشاف إمكانيات جديدة "خارج الصندوق".</p>
+                         <h4 class="font-semibold mb-2">أدوات رئيسية:</h4>
+                        <ul class="list-disc pr-6 text-gray-600">
+                            <li><strong>العصف الذهني (Brainstorming):</strong> توليد الأفكار بشكل جماعي دون حكم أو نقد.</li>
+                            <li><strong>SCAMPER:</strong> تقنية لتوليد أفكار جديدة عبر تعديل الحلول الحالية.</li>
+                        </ul>
+                    </div>
+                    <div id="prototype-content" class="stage-content">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">النموذج الأولي (Prototype)</h3>
+                        <p class="text-gray-700 mb-4">تحويل الأفكار من مجرد مفاهيم إلى نماذج ملموسة يمكن للمستخدمين التفاعل معها. لا يشترط أن تكون النماذج الأولية مكلفة أو متكاملة؛ يمكن أن تكون بسيطة جدًا مثل رسم ورقي أو نموذج تفاعلي بسيط.</p>
+                        <h4 class="font-semibold mb-2">الهدف الرئيسي:</h4>
+                        <p class="text-gray-600">التعلم السريع بأقل تكلفة، واختبار جدوى الأفكار، وجمع ملاحظات مبكرة من المستخدمين قبل استثمار موارد كبيرة في التنفيذ.</p>
+                    </div>
+                    <div id="test-content" class="stage-content">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">الاختبار (Test)</h3>
+                        <p class="text-gray-700 mb-4">عرض النماذج الأولية على المستخدمين لجمع ملاحظاتهم ومراقبة تفاعلهم. هذه المرحلة ليست مجرد "تأكيد" للحل، بل هي فرصة للتعلم وتحديد نقاط الضعف والعودة إلى المراحل السابقة لتحسين الحل بشكل تكراري.</p>
+                        <h4 class="font-semibold mb-2">الهدف الرئيسي:</h4>
+                        <p class="text-gray-600">فهم ما ينجح وما لا ينجح من وجهة نظر المستخدم، وتحسين الحل بناءً على ملاحظات واقعية.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comparison" class="mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">التفكير التصميمي مقابل التفكير التقليدي</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-red-400">
+                        <h3 class="text-2xl font-bold text-red-800 mb-4">التفكير التقليدي</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">🔴</span> <span>يركز على المشكلة من منظور تقني أو تجاري.</span></li>
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">🔴</span> <span>عملية خطية تبدأ بالمتطلبات وتنتهي بالحل.</span></li>
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">🔴</span> <span>يفترض أن المشكلة واضحة من البداية.</span></li>
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">🔴</span> <span>يهدف إلى الكفاءة وتقليل المخاطر عبر التخطيط المسبق.</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-green-500">
+                        <h3 class="text-2xl font-bold text-green-800 mb-4">التفكير التصميمي</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">🟢</span> <span>يركز على المشكلة من منظور إنساني (المستخدم أولاً).</span></li>
+                            <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">🟢</span> <span>عملية تكرارية وغير خطية تعتمد على التعلم المستمر.</span></li>
+                            <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">🟢</span> <span>يعتبر أن المشكلة الحقيقية قد تكون غامضة ويجب اكتشافها.</span></li>
+                             <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">🟢</span> <span>يحتضن الغموض ويشجع على التجربة والفشل السريع للتعلم.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="application" class="mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">تطبيقات وأدوات عملية</h2>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">شمولية التطبيق</h3>
+                        <p class="text-gray-700 mb-6">التفكير التصميمي ليس حكراً على المصممين، بل هو منهجية يمكن تطبيقها في مختلف المجالات لتحقيق الابتكار.</p>
+                        <div class="chart-container">
+                            <canvas id="applicabilityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">مثال: خريطة رحلة المستخدم</h3>
+                        <p class="text-gray-700 mb-6">لنتخيل طالبًا يسجل في مقرر جامعي. هذه الخريطة توضح تجربته، مشاعره، ونقاط الألم، مما يكشف عن فرص للتحسين. مرر الفأرة فوق كل خطوة لرؤية التفاصيل.</p>
+                        <div class="relative">
+                             <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200"></div>
+                            <div class="relative flex justify-between">
+                                <div class="journey-step text-center relative w-1/5">
+                                    <div class="mx-auto w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold border-4 border-white">١</div>
+                                    <p class="mt-2 text-sm font-semibold">الاكتشاف</p>
+                                    <div class="journey-tooltip absolute bottom-full mb-3 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 visibility-hidden transform -translate-y-2">
+                                        <strong class="block">مشاعر:</strong> حيرة لكثرة الخيارات.<br><strong class="block">نقطة ألم:</strong> صعوبة معرفة المتاح.
+                                    </div>
+                                </div>
+                                <div class="journey-step text-center relative w-1/5">
+                                    <div class="mx-auto w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold border-4 border-white">٢</div>
+                                    <p class="mt-2 text-sm font-semibold">التصفح</p>
+                                    <div class="journey-tooltip absolute bottom-full mb-3 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 visibility-hidden transform -translate-y-2">
+                                        <strong class="block">مشاعر:</strong> إحباط.<br><strong class="block">نقطة ألم:</strong> صعوبة إيجاد المقرر المناسب.
+                                    </div>
+                                </div>
+                                <div class="journey-step text-center relative w-1/5">
+                                    <div class="mx-auto w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold border-4 border-white">٣</div>
+                                    <p class="mt-2 text-sm font-semibold">الاختيار</p>
+                                    <div class="journey-tooltip absolute bottom-full mb-3 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 visibility-hidden transform -translate-y-2">
+                                        <strong class="block">مشاعر:</strong> قلق.<br><strong class="block">نقطة ألم:</strong> الخوف من تعارض المواعيد.
+                                    </div>
+                                </div>
+                                <div class="journey-step text-center relative w-1/5">
+                                    <div class="mx-auto w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold border-4 border-white">٤</div>
+                                    <p class="mt-2 text-sm font-semibold">التأكيد</p>
+                                     <div class="journey-tooltip absolute bottom-full mb-3 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 visibility-hidden transform -translate-y-2">
+                                        <strong class="block">مشاعر:</strong> راحة وترقب.<br><strong class="block">نقطة ألم:</strong> عدم وجود تأكيد فوري.
+                                    </div>
+                                </div>
+                                <div class="journey-step text-center relative w-1/5">
+                                    <div class="mx-auto w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center text-lg font-bold border-4 border-white">✓</div>
+                                    <p class="mt-2 text-sm font-semibold">بعد التسجيل</p>
+                                    <div class="journey-tooltip absolute bottom-full mb-3 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 visibility-hidden transform -translate-y-2">
+                                        <strong class="block">مشاعر:</strong> سعادة.<br><strong class="block">فرصة:</strong> طباعة الجدول بسهولة.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </main>
+
+        <footer class="text-center pt-8 border-t border-gray-200">
+            <p class="text-gray-600">هذه اللوحة التفاعلية هي توليف للمعلومات من محاضرات التفكير التصميمي.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stageTabs = document.querySelectorAll('.stage-card');
+            const stageContents = document.querySelectorAll('.stage-content');
+
+            stageTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const stage = tab.dataset.stage;
+
+                    stageTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    stageContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${stage}-content`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            Chart.defaults.font.family = 'Tajawal';
+            const applicabilityCtx = document.getElementById('applicabilityChart').getContext('2d');
+            const applicabilityChart = new Chart(applicabilityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['الهندسة', 'الطب والصحة', 'التعليم', 'ريادة الأعمال', 'الخدمات الحكومية', 'الحياة الشخصية'],
+                    datasets: [{
+                        label: 'مدى التطبيق',
+                        data: [90, 85, 95, 98, 80, 75],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                         y: {
+                            ticks: {
+                                font: {
+                                    size: 14,
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                             callbacks: {
+                                label: function(context) {
+                                    return ' مدى التطبيق: ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
